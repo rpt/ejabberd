@@ -15,8 +15,11 @@ test: escalus/ebin
 		-pa `pwd`/escalus/ebin \
 		`pwd`/escalus/deps/exmpp/ebin -s run_common_test ct
 
-escalus/ebin:
+escalus/ebin: escalus/Makefile
 	(cd escalus; make)
+
+escalus/Makefile:
+	(cd ..; git submodule update --init)
 
 console:
 	erl -sname test -setcookie ejabberd \
