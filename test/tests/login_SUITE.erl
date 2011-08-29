@@ -1,5 +1,5 @@
 %%==============================================================================
-%% Copyright 2010 Erlang Solutions Ltd.
+%% Copyright 2011 Erlang Solutions Ltd.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
 %% you may not use this file except in compliance with the License.
@@ -30,8 +30,10 @@ all() ->
      {group, messages}].
 
 groups() ->
-    [{register, [sequence], [register, check_unregistered]},
-     {login, [sequence], [log_one, log_one_digest]},
+    [{register, [sequence], [register, 
+                             check_unregistered]},
+     {login, [sequence], [log_one, 
+                          log_one_digest]},
      {messages, [sequence], [messages_story]}].
 
 suite() ->
@@ -114,3 +116,4 @@ messages_story(Config) ->
         escalus_assert:is_chat_message("Hi!", escalus_client:wait_for_stanza(Bob))
 
     end).
+
