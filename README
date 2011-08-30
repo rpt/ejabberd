@@ -20,7 +20,8 @@ To compile ejabberd you need:
  - ImageMagick's Convert program. Optional. For CAPTCHA challenges.
  - exmpp 0.9.6 or higher. Optional. For import/export XEP-0227 files. 
 
-This version of Ejabberd does not support storages other than Mnesia
+This version of ejabberd does not support storage backends other than
+Mnesia.
 
 1. Compile and install on *nix systems
 
@@ -29,18 +30,23 @@ To compile ejabberd, go to the main directory and execute the command:
     or
   ./rebar compile
 
-To install ejabberd, run this command (it will create an ejabberd release in rel/ejabberd directory):
+To generate ejabberd release:
   make rel
     or
   ./rebar generate
 
-These commands will:
- - Install the configuration files in /rel/ejabberd/etc
- - Install ejabberd binary, header and runtime files in /rel/ejabberd/lib
- - Install the administration scripts: /rel/ejabberd/bin/
- - Create a spool directory: /rel/ejabberd/var/
- - Create a directory for log files: /rel/ejabberd/log
- - Create a release files: /rel/ejabberd/releases
+These commands will generate a self-contained OTP system image in
+project's rel/ejabberd subdirectory. Contents of that directory look as
+follows:
+ - rel/ejabberd/bin - administration scripts
+ - rel/ejabberd/etc - configuration files
+ - rel/ejabberd/lib - ejabberd binary, header and runtime files
+ - rel/ejabberd/var - spool directory
+ - rel/ejabberd/log - log file directory
+ - rel/ejabberd/releases - release files directory
+
+To install ejabberd just copy the entire rel/ejabberd directory to
+a place you find suitable.
 
 
 2. Start ejabberd
@@ -48,6 +54,8 @@ These commands will:
 You can use the ejabberd command line administration script to
 start and stop ejabberd. For example:
   ejabberd console
+
+Running it without arguments will show you available possibilities.
 
 
 For detailed information please refer to the
