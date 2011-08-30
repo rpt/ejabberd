@@ -23,8 +23,6 @@ To compile ejabberd you need:
  - Zlib 1.2.3 or higher, for Stream Compression support
    (XEP-0138). Optional.
  - PAM library. Optional. For Pluggable Authentication Modules (PAM).
- - GNU Iconv 1.8 or higher, for the IRC Transport
-   (mod_irc). Optional. Not needed on systems with GNU Libc.
  - ImageMagick's Convert program. Optional. For CAPTCHA challenges.
  - exmpp 0.9.6 or higher. Optional. For import/export XEP-0227 files. 
 
