@@ -4,10 +4,10 @@
 
 -include("mod_privacy.hrl").
 
--define(MAX_ORDER, 5).
--define(MAX_LIST_SIZE, 5).
+-define(MAX_ORDER, 1000000).
+-define(MAX_LIST_SIZE, 25).
 -define(LIST_NAME_MAGIC, 100000).
--define(MAX_LISTS, 5).
+-define(MAX_LISTS, 2).
 
 -define(ensure_type(X), case Type of binary -> list_to_binary(X); string -> X end).
 -define(ensure_list(X), if is_binary(X) -> binary_to_list(X);
@@ -64,7 +64,10 @@ make_list_item(Type, UserPrefix, UserHost, UserCount) ->
     RandOrder = fun() -> random:uniform(?MAX_ORDER) end,
     RandBool = fun() -> rand([true,false]) end,
     fun() ->
-        MatchAll = RandBool(),
+        %% Don't ever match all as it may make tsung hang-up when it waits
+        %% for a result iq which was blocked.
+        MatchAll = false,
+        MatchIq = false,
         MatchOther = fun() ->
             case MatchAll of
                 true -> false;
@@ -75,7 +78,7 @@ make_list_item(Type, UserPrefix, UserHost, UserCount) ->
             RandAction(),
             RandOrder(),
             MatchAll,
-            MatchOther(), MatchOther(), MatchOther(), MatchOther()} end.
+            MatchIq, MatchOther(), MatchOther(), MatchOther()} end.
 
 randsize_list(Gen, Size) ->
     lists:map(
