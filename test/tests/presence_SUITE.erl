@@ -61,28 +61,12 @@ end_per_group(_GroupName, Config) ->
     escalus:delete_users(Config).
 
 init_per_testcase(CaseName, Config) ->
+    clear_rosters(Config),
     escalus:init_per_testcase(CaseName, Config).
 
-end_per_testcase(add_contact, Config) ->
-    [{_, UserSpec} | _] = escalus_config:get_property(escalus_users, Config),
-    remove_roster(UserSpec),
-    escalus:end_per_testcase(add_contact, Config);
-end_per_testcase(subscribe, Config) ->
-    end_rosters_remove(Config);
-end_per_testcase(subscribe_decline, Config) ->
-    end_rosters_remove(Config);
-end_per_testcase(unsubscribe, Config) ->
-    end_rosters_remove(Config);
 end_per_testcase(CaseName, Config) ->
+    clear_rosters(Config),
     escalus:end_per_testcase(CaseName, Config).
-
-end_rosters_remove(Config) ->
-    [{_, UserSpec1}, {_, UserSpec2} | _] =
-        escalus_config:get_property(escalus_users, Config),
-    remove_roster(UserSpec1),
-    remove_roster(UserSpec2),
-    escalus:end_per_testcase(subscription, Config).
-
 
 %%--------------------------------------------------------------------
 %% Tests
@@ -177,7 +161,7 @@ remove_contact(Config) ->
 
 
 subscribe(Config) ->
-    escalus:story(Config, [1, 1], fun(Alice,Bob) ->
+    escalus:story(Config, [1, 1], fun(Alice, Bob) ->
 
         %% add contact
         add_sample_contact(Alice, Bob),
@@ -382,6 +366,8 @@ check_subscription_stanzas(Stanzas, Type) ->
     true = contains_stanza(Stanzas, fun(S) ->
                                 escalus_pred:is_presence_type(Type, S) end).
 
-remove_roster(UserSpec) ->
-    [Username, Server, _Pass] = escalus_config:get_usp(UserSpec),
-    rpc:call(ejabberd@localhost, mod_roster, remove_user, [Username, Server]).
+clear_rosters(Config) ->
+    lists:foreach(fun({_Name, UserSpec}) ->
+        [Username, Server, _Pass] = escalus_config:get_usp(UserSpec),
+        rpc:call(ejabberd@localhost, mod_roster, remove_user, [Username, Server])
+    end, escalus_config:get_property(escalus_users, Config)).
