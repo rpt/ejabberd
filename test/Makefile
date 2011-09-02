@@ -7,8 +7,7 @@ test_clean: escalus/ebin
 	make test
 
 test: escalus/ebin
-	rm -rf ct_report
-	mkdir  ct_report
+	mkdir -p ct_report
 	erlc -I escalus/deps/exmpp/include run_common_test.erl
 	erl -noinput -sname test -setcookie ejabberd \
 		-pa `pwd`/tests \
