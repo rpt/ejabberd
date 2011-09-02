@@ -348,17 +348,15 @@ remove_unsubscribe(Config) ->
         escalus_client:send(Alice, escalus_stanza:roster_remove_contact(Bob)),
 
         StanzasA = escalus_client:wait_for_stanzas(Alice, 3),
-        true = contains_stanza(StanzasA, {escalus_assert, is_roster_result_set}),
-        true = contains_stanza(StanzasA, {escalus_assert, is_result}),
+        true = contains_stanza(StanzasA, {escalus_pred, is_roster_result_set}),
+        true = contains_stanza(StanzasA, {escalus_pred, is_result}),
         true = contains_stanza(StanzasA, fun(S) ->
-                                escalus_assert:is_presence_type("unavailable",S) end),
+                                escalus_pred:is_presence_type("unavailable",S) end),
 
         StanzasB = escalus_client:wait_for_stanzas(Bob, 2),
-        true = contains_stanza(StanzasB, {escalus_assert, is_roster_result_set}),
+        true = contains_stanza(StanzasB, {escalus_pred, is_roster_result_set}),
         true = contains_stanza(StanzasB, fun(S) ->
-                                escalus_assert:is_presence_type("unsubscribe",S) end)
-
-                                          
+                                escalus_pred:is_presence_type("unsubscribe",S) end)
     end).
 
 
@@ -367,9 +365,9 @@ remove_unsubscribe(Config) ->
 %%-----------------------------------------------------------------
 
 add_sample_contact(Alice, Bob) ->
-    escalus_client:send(Alice, 
-                        escalus_stanza:roster_add_contact(Bob, 
-                                                          ["friends"], 
+    escalus_client:send(Alice,
+                        escalus_stanza:roster_add_contact(Bob,
+                                                          ["friends"],
                                                           "Bobby")),
     Received = escalus_client:wait_for_stanza(Alice),
     escalus_assert:is_roster_result_set(Received),
@@ -377,18 +375,12 @@ add_sample_contact(Alice, Bob) ->
     escalus_assert:is_result(escalus_client:wait_for_stanza(Alice)).
 
 contains_stanza(Stanzas, F) ->
-    lists:foldl(fun(El, Res) ->
-                      try F(El) of
-                          _ -> true
-                      catch
-                          _:_ -> Res
-                      end
-               end, false, Stanzas).
+    lists:any(F, Stanzas).
 
 check_subscription_stanzas(Stanzas, Type) ->
-    true = contains_stanza(Stanzas, {escalus_assert, is_roster_result_set}),
+    true = contains_stanza(Stanzas, {escalus_pred, is_roster_result_set}),
     true = contains_stanza(Stanzas, fun(S) ->
-                                escalus_assert:is_presence_type(Type, S) end).
+                                escalus_pred:is_presence_type(Type, S) end).
 
 remove_roster(UserSpec) ->
     [Username, Server, _Pass] = escalus_config:get_usp(UserSpec),
